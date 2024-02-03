@@ -9,22 +9,19 @@ import time
 
 def scanner(root1, dirs1, files1, file):
 
-    if ".yara" in file or ".yar" in file:
-        rule = yara.compile(os.path.join(root, file))
+    
+    rule = yara.compile(os.path.join(root, file))
+    
+    for file1 in files1:
+        logger1.info("Scanning File - %s",str(file1))
         
-        for file1 in files1:
-            logger1.info("Scanning File - %s",str(file1))
-            
-            try:
-                matches = rule.match(os.path.join(root1, file1))
-                if matches and (".yara" not in file1 or ".yar" not in file1):
-                    print("---------","\t",matches," == ",os.path.join(root1, file1), " <==> ",file)
-            except Exception as e:
-                logger2.error(e)
+        try:
+            matches = rule.match(os.path.join(root1, file1))
+            if matches and (".yara" not in file1 or ".yar" not in file1):
+                print("---------","\t",matches," == ",os.path.join(root1, file1), " <==> ",file)
+        except Exception as e:
+            logger2.error(e)
         
-    else:
-        logger2.error("YARA should not compile a normal file - %s",file)
-        return
     
 start_time = time.time()
 
@@ -50,11 +47,14 @@ for root, dirs, files in os.walk("/home/kali/Documents/GitHub/Yara-rules/rules")
 
     for file in files:
         
-        
-        with ProcessPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(scanner, root1, dirs1, files1, file) for root1, dirs1, files1 in os.walk("/home/kali")]
-
-            for future in futures:
-                result = future.result()
+        if ".yara" in file or ".yar" in file:
+            with ProcessPoolExecutor(max_workers=5) as executor:
+                futures = [executor.submit(scanner, root1, dirs1, files1, file) for root1, dirs1, files1 in os.walk("/home/kali")]
+    
+                for future in futures:
+                    result = future.result()
+        else:
+            logger2.error("YARA should not compile a normal file - %s",file)
+            continue
 
 print("--- %s seconds ---" % (time.time() - start_time))
