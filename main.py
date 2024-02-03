@@ -43,7 +43,7 @@ logger2.addHandler(file_handler2)
 # logger.critical('This is a critical message')
 
 for root, dirs, files in os.walk("/home/kali/Documents/GitHub/Yara-rules/rules"):
-    path = root.split(os.sep)
+    #path = root.split(os.sep)
 
     for file in files:
         
