@@ -1,6 +1,6 @@
 # mawscan
 
-TO - DO
-1. EXCLUDE FOLDERS
-2. EXCLUDE FILE TYPES
-3. RESTRICT SCAN SCOPE
+TODO
+1. Exclude Folders
+2. Exclude FileTypes
+3. Restrict Scan Scope
