@@ -10,15 +10,27 @@ import time
 import sys
 import concurrent.futures
 import filetype
+import argparse
 
 if __name__ == '__main__':
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i','--index', action='store_true', default=False, help="Perform no file indexing, only the scan")
+
+    args = parser.parse_args()
+    
+    if args.help:
+        parser.print_help()
+        sys.exit(0)
+
+    index = not args.noindex
 
     flag = 1
 
     if os.path.exists('filesystem.db'):
         flag = 0
 
-    if flag == 1:
+    if flag == 1 and index:
         create_table()
 
         print('\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#')
