@@ -22,8 +22,7 @@ def scanner(root, row, file, logger1, logger2):
     except Exception as e:
         logger2.error(e)
 
-def logic():
-
+def scanme(processes=10):
     start_time = time.time()
 
     logger1 = logging.getLogger('logger1')
@@ -59,7 +58,7 @@ def logic():
         for file in files:
             
             if ".yara" in file or ".yar" in file:
-                with ProcessPoolExecutor(max_workers=10) as executor:
+                with ProcessPoolExecutor(max_workers=processes) as executor:
                     futures = [executor.submit(scanner, root, row[0], file, logger1, logger2) for row in rows]
 
                     for future in futures:

@@ -36,10 +36,10 @@ def identify(file):
     sqliteConnection.commit()
     cursor.close()
 
-def run_identify():
+def run_identify(threads=10):
     config = dotenv_values(".env")
     HOME = config['HOME']
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
         for root, dirs, files in os.walk(HOME):
             for file in files:
                 file_path = os.path.join(root, file)

@@ -1,6 +1,6 @@
 from identify import run_identify
 from create_table import create_table
-from scanner import logic
+from scanner import scanme
 import sqlite3
 import os
 import logging
@@ -15,22 +15,23 @@ import argparse
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i','--index', action='store_true', default=False, help="Perform no file indexing, only the scan")
+    parser.add_argument('-i','--index', action='store_true', default=False, help="Refresh indexing cache")
+    parser.add_argument('-ns','--noscan', action='store_true', default=False, help="Perform only file indexing, no scan")
+    parser.add_argument("-t", "--threads", type=int, default=10, help="Specify the number of threads required for indexing (default=10)")
+    parser.add_argument("-p", "--processes", type=int, default=10, help="Specify the number of processes required for scanning (default=10)")
 
     args = parser.parse_args()
-    
+        
     if args.help:
         parser.print_help()
         sys.exit(0)
+        
+    # INITIAL -> FILE - T , INDEX - F 
+    # SCAN -> FILE - F , INDEX - F
+    # REFRESH -> FILE - F , INDEX - T
+    # INITIAL + FLAG -> FILE - T , INDEX - T
 
-    index = not args.noindex
-
-    flag = 1
-
-    if os.path.exists('filesystem.db'):
-        flag = 0
-
-    if flag == 1 and index:
+    if not os.path.exists('filesystem.db') or args.index:
         create_table()
 
         print('\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#')
@@ -44,11 +45,15 @@ if __name__ == '__main__':
 
         ''')
         print('#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#\n')
-
-        run_identify()
+        
+        if args.threads:
+            
+            run_identify(args.threads)
     
-    print('\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#')
-    print('''
+    if not args.noscan:
+    
+        print('\n#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#')
+        print('''
    _____  _____          _   _ _   _ _____ _   _  _____ 
   / ____|/ ____|   /\   | \ | | \ | |_   _| \ | |/ ____|
  | (___ | |       /  \  |  \| |  \| | | | |  \| | |  __ 
@@ -57,5 +62,7 @@ if __name__ == '__main__':
  |_____/ \_____/_/    \_|_| \_|_| \_|_____|_| \_|\_____|
 
 ''')
-    print('#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#\n')
-    logic()
+        print('#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#\n')
+        
+        if args.processes:
+            scanme(args.processes)
