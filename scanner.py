@@ -42,7 +42,10 @@ def scanme(category, processes=10):
 
     conn = sqlite3.connect('filesystem.db')
     try:
-        sql = f"SELECT fullpath FROM filesystem WHERE category==\"{category}\""
+        if category == "all":
+            sql = f"SELECT fullpath FROM filesystem"
+        else:
+            sql = f"SELECT fullpath FROM filesystem WHERE category==\"{category}\""
         cursor = conn.execute(sql)
     except sqlite3.OperationalError as e:
         print('\n#=#=#=#=#=#=#=#=#=#=#=#')
