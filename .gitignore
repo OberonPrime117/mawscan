@@ -4,3 +4,4 @@ error.log
 app.log
 filesystem.db
 filesystem.db-journal
+config.yml

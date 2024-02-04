@@ -1,0 +1,9 @@
+exclude_dirs:
+  - /home/kali/Documents/GitHub
+  - /home/kali/Documents/VM
+
+include_dirs:
+  - /home/kali/Documents
+
+rules:
+  - /home/kali/Documents/GitHub/Yara-rules/rules
