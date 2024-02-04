@@ -1,0 +1,9 @@
+exclude_dirs:
+  - /home/aditya/Documents/GitHub
+  - /home/aditya/Documents/VM
+
+include_dirs:
+  - /home/aditya/Documents
+
+rules:
+  - /home/aditya/Documents/GitHub/Yara-rules/rules

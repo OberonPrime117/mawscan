@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import yaml
 import yara
 from tqdm import tqdm
 import logging
@@ -8,11 +9,15 @@ from concurrent.futures import ProcessPoolExecutor
 import time
 import sqlite3
 import sys
-from dotenv import dotenv_values
 
 def scanner(root, row, file, logger1, logger2):
 
-    rule = yara.compile(os.path.join(root, file))    
+    try:
+        rule = yara.compile(os.path.join(root, file))
+    except Exception as e:
+        logger2.error(str(e)," <==> YARA - ",file)
+        return
+       
     logger1.info("Scanning File - %s",str(row))
     
     try:
@@ -22,7 +27,7 @@ def scanner(root, row, file, logger1, logger2):
     except Exception as e:
         logger2.error(e)
 
-def scanme(processes=10):
+def scanme(category, processes=10):
     start_time = time.time()
 
     logger1 = logging.getLogger('logger1')
@@ -37,7 +42,8 @@ def scanme(processes=10):
 
     conn = sqlite3.connect('filesystem.db')
     try:
-        cursor = conn.execute("SELECT fullpath FROM filesystem WHERE filetype==\"exe\"")
+        sql = f"SELECT fullpath FROM filesystem WHERE category==\"{category}\""
+        cursor = conn.execute(sql)
     except sqlite3.OperationalError as e:
         print('\n#=#=#=#=#=#=#=#=#=#=#=#')
         logger2.error("The CREATE TABLE operation failed")
@@ -50,19 +56,23 @@ def scanme(processes=10):
 
     rows = cursor.fetchall()
     
-    config = dotenv_values(".env")
-    RULES = config['RULES']
+    with open("config.yml") as f:
+        config = yaml.safe_load(f)
+    
+    RULES = config["rules"]
+        
+    for RULE in RULES:
 
-    for root, dirs, files in os.walk(RULES):
+        for root, dirs, files in os.walk(RULE):
 
-        for file in files:
-            
-            if ".yara" in file or ".yar" in file:
-                with ProcessPoolExecutor(max_workers=processes) as executor:
-                    futures = [executor.submit(scanner, root, row[0], file, logger1, logger2) for row in rows]
+            for file in files:
+                
+                if ".yara" in file or ".yar" in file:
+                    with ProcessPoolExecutor(max_workers=processes) as executor:
+                        futures = [executor.submit(scanner, root, row[0], file, logger1, logger2) for row in rows]
 
-                    for future in futures:
-                        result = future.result()
+                        for future in futures:
+                            result = future.result()
 
                 
     print("--- %s seconds ---" % (time.time() - start_time))

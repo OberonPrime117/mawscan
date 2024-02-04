@@ -19,13 +19,10 @@ if __name__ == '__main__':
     parser.add_argument('-ns','--noscan', action='store_true', default=False, help="Perform only file indexing, no scan")
     parser.add_argument("-t", "--threads", type=int, default=10, help="Specify the number of threads required for indexing (default=10)")
     parser.add_argument("-p", "--processes", type=int, default=10, help="Specify the number of processes required for scanning (default=10)")
+    parser.add_argument('-ft','--filetype', choices=['application', 'text', 'image', 'video'], default='application',help="Specify the filetype that you want to scan")
 
     args = parser.parse_args()
-        
-    if args.help:
-        parser.print_help()
-        sys.exit(0)
-        
+            
     # INITIAL -> FILE - T , INDEX - F 
     # SCAN -> FILE - F , INDEX - F
     # REFRESH -> FILE - F , INDEX - T
@@ -65,4 +62,5 @@ if __name__ == '__main__':
         print('#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#\n')
         
         if args.processes:
-            scanme(args.processes)
+            if args.filetype:
+                scanme(args.filetype, args.processes)
