@@ -26,13 +26,29 @@ If your filesystem is huge and system specs are low then <b>INDEXING + SCANNING<
 
 The tool will automatically index the filesystem. The flag is only required on subsequent scans.
 
+### FLAGS
 
-### TODOs
+`python runme.py --help`
 
-- [x] Include ARGSPARSE
-- [ ] Exclude Folders
-- [ ] Exclude FileTypes
-- [ ] Restrict Scan Scope
-- [ ] Proper Documentation
-- [x] dotenv config for locations
-- [x] status of completion - database created ? manual control over rescan of files
+`usage: runme.py [-h] [-i] [-ns] [-t THREADS]`
+
+#### `-h` // `--help`
+
+Show this help message and exit
+
+#### `-i` // `--index`
+
+Refresh indexing cache
+
+#### `-ns` // `--noscan`
+
+Perform only file indexing, no scan
+
+#### `-t THREADS` // `--threads THREADS`
+
+Specify the number of threads required for scanning (default=10)
+
+#### `-p PROCESSES` // `--processes PROCESSES`
+
+Specify the number of processes required for scanning (default=10)
+
