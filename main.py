@@ -9,7 +9,6 @@ import time
 
 def scanner(root1, dirs1, files1, file):
 
-    
     rule = yara.compile(os.path.join(root, file))
     
     for file1 in files1:
@@ -42,19 +41,19 @@ logger2.addHandler(file_handler2)
 # logger.error('This is an error message')
 # logger.critical('This is a critical message')
 
-for root, dirs, files in os.walk("/home/kali/Documents/GitHub/Yara-rules/rules"):
+for root, dirs, files in os.walk("/home/kali/Documents/GitHub/binaryalert/rules/public"):
+    
+    
     #path = root.split(os.sep)
 
     for file in files:
         
         if ".yara" in file or ".yar" in file:
-            with ProcessPoolExecutor(max_workers=5) as executor:
+            with ProcessPoolExecutor(max_workers=10) as executor:
                 futures = [executor.submit(scanner, root1, dirs1, files1, file) for root1, dirs1, files1 in os.walk("/home/kali")]
-    
+
                 for future in futures:
                     result = future.result()
-        else:
-            logger2.error("YARA should not compile a normal file - %s",file)
-            continue
 
+            
 print("--- %s seconds ---" % (time.time() - start_time))

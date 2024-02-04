@@ -1,1 +1,6 @@
 .env
+__pycache__
+error.log
+app.log
+filesystem.db
+filesystem.db-journal
