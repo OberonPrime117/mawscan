@@ -4,7 +4,7 @@ This malware scanner will first <b>index files</b> and then will perform <b>scan
 
 ### WHAT PROCESSES ARE CACHED ?
 
-| ROOT | INDEX | SCAN | 
+|  | INDEX | SCAN | 
 | - | - | - |
 | CACHE | cached | not cached | 
 
@@ -12,7 +12,7 @@ Essentially, the program will not repeat the <b>INDEXING PROCESS</b> for subsequ
 
 ### WHAT PROCESS WILL THE PROGRAM PERFORM ?
 
-| ROOT | INDEX + SCAN | ONLY SCAN |
+|  | INDEX + SCAN | ONLY SCAN |
 | - | - | - |
 | FLAG | with --index flag | default (if db is cached) |
 
