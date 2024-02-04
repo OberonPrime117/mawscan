@@ -3,11 +3,10 @@ import filetype
 import os
 import sqlite3
 import time
+from dotenv import dotenv_values
 
 def identify(file):
-
-    start_time = time.time()
-
+    
     try:
         kind = filetype.guess(file)
         if kind is None:
@@ -37,11 +36,11 @@ def identify(file):
     sqliteConnection.commit()
     cursor.close()
 
-    print("--- %s seconds ---" % (time.time() - start_time))
-
 def run_identify():
+    config = dotenv_values(".env")
+    HOME = config['HOME']
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        for root, dirs, files in os.walk("/home/aditya"):
+        for root, dirs, files in os.walk(HOME):
             for file in files:
                 file_path = os.path.join(root, file)
                 if len(file.split(".")) > 1:

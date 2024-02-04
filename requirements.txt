@@ -1,2 +1,4 @@
 tqdm
 yara-python
+python-dotenv
+filetype

@@ -8,6 +8,7 @@ from concurrent.futures import ProcessPoolExecutor
 import time
 import sqlite3
 import sys
+from dotenv import dotenv_values
 
 def scanner(root, row, file, logger1, logger2):
 
@@ -49,8 +50,11 @@ def logic():
         sys.exit()
 
     rows = cursor.fetchall()
+    
+    config = dotenv_values(".env")
+    RULES = config['RULES']
 
-    for root, dirs, files in os.walk("/home/aditya/Documents/GitHub/binaryalert/rules/public"):
+    for root, dirs, files in os.walk(RULES):
 
         for file in files:
             
