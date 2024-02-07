@@ -26,6 +26,12 @@ If your filesystem is huge and system specs are low then <b>INDEXING + SCANNING<
 
 The tool will automatically index the filesystem. The flag is only required on subsequent scans.
 
+### RECOMMENDATIONS
+
+For YARA rules, I recommend the following repository ->
+
+`git clone https://github.com/Yara-Rules/rules.git`
+
 ### FLAGS
 
 `python runme.py --help`

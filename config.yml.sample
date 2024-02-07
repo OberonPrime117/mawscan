@@ -6,4 +6,4 @@ include_dirs:
   - /home/kali/Documents
 
 rules:
-  - /home/kali/Documents/GitHub/Yara-rules/rules
+  - /home/kali/Documents/GitHub/rules

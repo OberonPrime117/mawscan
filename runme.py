@@ -1,15 +1,7 @@
 from identify import run_identify
 from create_table import create_table
 from scanner import scanme
-import sqlite3
 import os
-import logging
-import yara
-from concurrent.futures import ProcessPoolExecutor
-import time
-import sys
-import concurrent.futures
-import filetype
 import argparse
 
 if __name__ == '__main__':
