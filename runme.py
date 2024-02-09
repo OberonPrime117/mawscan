@@ -1,17 +1,27 @@
 from identify import run_identify
 from create_table import create_table
-from scanner import scanme
+from md5_scanner import md5_scanner
+from sha1_scanner import sha1_scanner
+from sha256_scanner import sha256_scanner
+from sha512_scanner import sha512_scanner
+from yara_scanner import yara_scanner
 import os
 import argparse
 
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i','--index', action='store_true', default=False, help="Refresh indexing cache")
-    parser.add_argument('-ns','--noscan', action='store_true', default=False, help="Perform only file indexing, no scan")
+    parser.add_argument('-i','--index', action='store_true', default=False, help="Refresh indexing cache and scan files")
     parser.add_argument("-t", "--threads", type=int, default=10, help="Specify the number of threads required for indexing (default=10)")
     parser.add_argument("-p", "--processes", type=int, default=10, help="Specify the number of processes required for scanning (default=10)")
     parser.add_argument('-ft','--filetype', choices=['application', 'text', 'image', 'video', 'all'], default='application',help="Specify the filetype that you want to scan")
+    
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--yara', action='store_true')
+    group.add_argument('--md5', action='store_true')  
+    group.add_argument('--sha1', action='store_true')
+    group.add_argument('--sha256', action='store_true')
+    group.add_argument('-ns','--noscan', action='store_true', default=False, help="Perform only file indexing, no scan")
 
     args = parser.parse_args()
             
@@ -55,4 +65,13 @@ if __name__ == '__main__':
         
         if args.processes:
             if args.filetype:
-                scanme(args.filetype, args.processes)
+                if args.yara:
+                    yara_scanner(args.filetype, args.processes)
+                elif args.md5:
+                    md5_scanner(args.filetype, args.processes)
+                elif args.sha1:
+                    sha1_scanner(args.filetype, args.processes)
+                elif args.sha256:
+                    sha256_scanner(args.filetype, args.processes)
+                elif args.sha512:
+                    sha512_scanner(args.filetype, args.processes)
