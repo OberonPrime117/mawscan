@@ -9,6 +9,8 @@
 - [x] Proper Documentation
 - [x] dotenv config for locations
 - [x] manual control over status of completion - rescan of files
-- [ ] MD5
-- [ ] SHA1
-- [ ] SHA256
+- [x] MD5
+- [x] SHA1
+- [x] SHA256
+- [ ] continuous automatic background scanning
+- [ ] web protection - IDS
