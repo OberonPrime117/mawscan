@@ -17,7 +17,7 @@ def scanner(root, row, file, logger1, logger2):
     try:
         rule = yara.compile(os.path.join(root, file))
     except Exception as e:
-        logger2.error(str(e)," <==> YARA - ",file)
+        logger2.error(str(e)+" <==> YARA - "+file)
         return
        
     logger1.info("Scanning File - %s",str(row))

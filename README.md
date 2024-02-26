@@ -46,10 +46,6 @@ Show this help message and exit
 
 Refresh indexing cache
 
-#### `-ns` // `--noscan`
-
-Perform only file indexing, no scan
-
 #### `-t THREADS` // `--threads THREADS`
 
 Specify the number of threads required for scanning (default=10)
@@ -58,3 +54,28 @@ Specify the number of threads required for scanning (default=10)
 
 Specify the number of processes required for scanning (default=10)
 
+#### `-ft {application,text,image,video,all}` // `--filetype`
+
+Specify filetype that you want to scan
+
+#### CUSTOMISE SCAN TYPE (COMPULSORY TO USE THIS FLAG)
+
+#### `--yara`
+
+Utilise YARA rules for scanning
+
+#### `--md5`
+
+Utilise MD5 hash for scanning
+
+#### `--sha1` 
+
+Utilise SHA1 hash for scanning
+
+#### `--sha256`
+
+Utilise SHA256 hash for scanning
+
+#### `-ns` // `--noscan`
+
+Perform only file indexing, no scan
