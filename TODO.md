@@ -11,4 +11,4 @@
 - [x] SHA256 scanner
 - [x] CAB (Continuous Automatic Background) Scanning
 - [ ] Record PID - What services are running and total runtimes of service ?
-- [ ] OPTIONAL GOAL => Intrusion Detection System
+- [ ] OPTIONAL GOAL - Intrusion Detection System
