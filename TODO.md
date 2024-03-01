@@ -14,3 +14,4 @@
 - [x] SHA256
 - [ ] continuous automatic background scanning
 - [ ] web protection - IDS
+- [ ] PID record, what services are running and record total runtimes
