@@ -5,7 +5,7 @@ import yaml
 import yara
 from tqdm import tqdm
 import logging
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 import time
 import sqlite3
 import sys
@@ -13,7 +13,7 @@ import hashlib
 
 # root + file = rule location, row = filesystem, logger1 = info, logger2 = error
 def scanner(text, row, md5_path, logger1, logger2):
-            
+
     logger1.info("Scanning File - %s",str(row))
     
     # CALCULATE HASH
@@ -21,7 +21,7 @@ def scanner(text, row, md5_path, logger1, logger2):
     with open(row, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""): 
             hash_md5.update(chunk)
-    
+        
     file_md5 = hash_md5.hexdigest()
     
     if file_md5 in text:
