@@ -1,10 +1,10 @@
-from identify import run_identify
-from create_table import create_table
-from md5_scanner import md5_scanner
-from sha1_scanner import sha1_scanner
-from sha256_scanner import sha256_scanner
-from sha512_scanner import sha512_scanner
-from yara_scanner import yara_scanner
+from utils.identify import run_identify
+from utils.create_table import create_table
+from scanner.md5_scanner import md5_scanner
+from scanner.sha1_scanner import sha1_scanner
+from scanner.sha256_scanner import sha256_scanner
+from scanner.sha512_scanner import sha512_scanner
+from scanner.yara_scanner import yara_scanner
 import os
 import argparse
 

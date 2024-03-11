@@ -2,8 +2,6 @@
 
 import os
 import yaml
-import yara
-from tqdm import tqdm
 import logging
 from concurrent.futures import ProcessPoolExecutor
 import time
@@ -12,22 +10,22 @@ import sys
 import hashlib
 
 # root + file = rule location, row = filesystem, logger1 = info, logger2 = error
-def scanner(text, row, sha256_path, logger1, logger2):
-    
+def scanner(text, row, md5_path, logger1, logger2):
+
     logger1.info("Scanning File - %s",str(row))
     
     # CALCULATE HASH
-    hash_sha256 = hashlib.sha256()
+    hash_md5 = hashlib.md5()
     with open(row, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""): 
-            hash_sha256.update(chunk)
+            hash_md5.update(chunk)
+        
+    file_md5 = hash_md5.hexdigest()
     
-    file_sha256 = hash_sha256.hexdigest()
-    
-    if file_sha256 in text:
-        print("==> HASH FILE - ",sha256_path, " <==> MALICIOUS FILE - ",row)
+    if file_md5 in text:
+        print("==> HASH FILE - ",md5_path, " <==> MALICIOUS FILE - ",row)
 
-def sha256_scanner(category, processes=10):
+def md5_scanner(category, processes=10):
     start_time = time.time()
 
     logger1 = logging.getLogger('logger1')
@@ -37,7 +35,7 @@ def sha256_scanner(category, processes=10):
 
     logger2 = logging.getLogger('logger2')
     logger2.setLevel(logging.ERROR)
-    file_handler2 = logging.FileHandler('error.log', mode='w')
+    file_handler2 = logging.FileHandler(os.path.join('logs','error.log'), mode='w')
     logger2.addHandler(file_handler2)
 
     conn = sqlite3.connect('filesystem.db')
@@ -62,24 +60,24 @@ def sha256_scanner(category, processes=10):
     with open("config.yml") as f:
         config = yaml.safe_load(f)
     
-    SHA256HASHES = config["sha256_hash"]
+    MD5HASHES = config["md5_hash"]
     
     # MULTIPLE FILES FOR MD5
-    for SHA256 in SHA256HASHES:
+    for MD5 in MD5HASHES:
         
         # ITERATE THRU RULE LOCATION
-        for root, dirs, files in os.walk(SHA256):
+        for root, dirs, files in os.walk(MD5):
 
             for file in files:
                                 
                 # CHECK IF HASH IS IN THIS FILE
-                sha256_path = os.path.join(root, file)
+                md5_path = os.path.join(root, file)
                 
-                f = open(sha256_path, 'r')
+                f = open(md5_path, 'r')
                 text = f.read()
                                 
                 with ProcessPoolExecutor(max_workers=processes) as executor:
-                    futures = [executor.submit(scanner, text, row[0], sha256_path, logger1, logger2) for row in rows]
+                    futures = [executor.submit(scanner, text, row[0], md5_path, logger1, logger2) for row in rows]
 
                     for future in futures:
                         result = future.result()

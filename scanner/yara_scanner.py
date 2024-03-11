@@ -9,25 +9,27 @@ from concurrent.futures import ProcessPoolExecutor
 import time
 import sqlite3
 import sys
-import hashlib
 
 # root + file = rule location, row = filesystem, logger1 = info, logger2 = error
-def scanner(text, row, sha1_path, logger1, logger2):
-            
+
+def scanner(root, row, file, logger1, logger2):
+
+    try:
+        rule = yara.compile(os.path.join(root, file))
+    except Exception as e:
+        logger2.error(str(e)+" <==> YARA - "+file)
+        return
+       
     logger1.info("Scanning File - %s",str(row))
     
-    # CALCULATE HASH
-    hash_sha1 = hashlib.sha1()
-    with open(row, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""): 
-            hash_sha1.update(chunk)
-    
-    file_sha1 = hash_sha1.hexdigest()
-    
-    if file_sha1 in text:
-        print("==> HASH FILE - ",sha1_path, " <==> MALICIOUS FILE - ",row)
+    try:
+        matches = rule.match(row)
+        if matches and (".yara" not in row or ".yar" not in row):
+            print("==>","\t",matches," <==> ",row, " <==> ",file)
+    except Exception as e:
+        logger2.error(e)
 
-def sha1_scanner(category, processes=10):
+def yara_scanner(category, processes=10):
     start_time = time.time()
 
     logger1 = logging.getLogger('logger1')
@@ -37,7 +39,7 @@ def sha1_scanner(category, processes=10):
 
     logger2 = logging.getLogger('logger2')
     logger2.setLevel(logging.ERROR)
-    file_handler2 = logging.FileHandler('error.log', mode='w')
+    file_handler2 = logging.FileHandler(os.path.join('logs','error.log'), mode='w')
     logger2.addHandler(file_handler2)
 
     conn = sqlite3.connect('filesystem.db')
@@ -62,29 +64,20 @@ def sha1_scanner(category, processes=10):
     with open("config.yml") as f:
         config = yaml.safe_load(f)
     
-    SHA1HASHES = config["sha1_hash"]
-    
-    # MULTIPLE FILES FOR SHA1
-    for SHA1 in SHA1HASHES:
+    RULES = config["rules"]
         
-        # ITERATE THRU RULE LOCATION
-        for root, dirs, files in os.walk(SHA1):
+    for RULE in RULES:
+
+        for root, dirs, files in os.walk(RULE):
 
             for file in files:
-                                
-                # CHECK IF HASH IS IN THIS FILE
-                sha1_path = os.path.join(root, file)
                 
-                f = open(sha1_path, 'r')
-                text = f.read()
-                                
-                with ProcessPoolExecutor(max_workers=processes) as executor:
-                    futures = [executor.submit(scanner, text, row[0], sha1_path, logger1, logger2) for row in rows]
+                if ".yara" in file or ".yar" in file:
+                    with ProcessPoolExecutor(max_workers=processes) as executor:
+                        futures = [executor.submit(scanner, root, row[0], file, logger1, logger2) for row in rows]
 
-                    for future in futures:
-                        result = future.result()
-                
-                f.close()
+                        for future in futures:
+                            result = future.result()
 
                 
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -85,7 +85,7 @@ def logic():
 
     logger2 = logging.getLogger('logger2')
     logger2.setLevel(logging.ERROR)
-    file_handler2 = logging.FileHandler('error.log', mode='w')
+    file_handler2 = logging.FileHandler(os.path.join('logs','error.log'), mode='w')
     logger2.addHandler(file_handler2)
 
     conn = sqlite3.connect('filesystem.db')

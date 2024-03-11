@@ -1,9 +1,20 @@
 exclude_dirs:
-  - /home/kali/Documents/GitHub
-  - /home/kali/Documents/VM
+  - C:\Users\Aditya\Documents\GitHub\defacement\stuff
 
 include_dirs:
-  - /home/kali/Documents
+  - C:\Users\Aditya\Documents\GitHub\defacement
 
 rules:
-  - /home/kali/Documents/GitHub/rules
+  - C:\Users\Aditya\Documents\GitHub\mawscan\md5sum
+
+md5_hash:
+  - C:\Users\Aditya\Documents\GitHub\mawscan\md5sum
+
+sha1_hash:
+  - C:\Users\Aditya\Documents\GitHub\mawscan\sha1sum
+
+sha256_hash:
+  - C:\Users\Aditya\Documents\GitHub\mawscan\sha256sum
+
+sha512_hash:
+  - C:\Users\Aditya\Documents\GitHub\mawscan\sha512sum

@@ -2,32 +2,30 @@
 
 import os
 import yaml
-import yara
-from tqdm import tqdm
 import logging
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 import time
 import sqlite3
 import sys
 import hashlib
 
 # root + file = rule location, row = filesystem, logger1 = info, logger2 = error
-def scanner(text, row, md5_path, logger1, logger2):
-
+def scanner(text, row, sha512_path, logger1, logger2):
+    
     logger1.info("Scanning File - %s",str(row))
     
     # CALCULATE HASH
-    hash_md5 = hashlib.md5()
+    hash_sha512 = hashlib.sha512()
     with open(row, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""): 
-            hash_md5.update(chunk)
-        
-    file_md5 = hash_md5.hexdigest()
+            hash_sha512.update(chunk)
     
-    if file_md5 in text:
-        print("==> HASH FILE - ",md5_path, " <==> MALICIOUS FILE - ",row)
+    file_sha512 = hash_sha512.hexdigest()
+    
+    if file_sha512 in text:
+        print("==> HASH FILE - ",sha512_path, " <==> MALICIOUS FILE - ",row)
 
-def md5_scanner(category, processes=10):
+def sha512_scanner(category, processes=10):
     start_time = time.time()
 
     logger1 = logging.getLogger('logger1')
@@ -62,24 +60,24 @@ def md5_scanner(category, processes=10):
     with open("config.yml") as f:
         config = yaml.safe_load(f)
     
-    MD5HASHES = config["md5_hash"]
+    SHA512HASHES = config["sha512_hash"]
     
     # MULTIPLE FILES FOR MD5
-    for MD5 in MD5HASHES:
+    for SHA512 in SHA512HASHES:
         
         # ITERATE THRU RULE LOCATION
-        for root, dirs, files in os.walk(MD5):
+        for root, dirs, files in os.walk(SHA512):
 
             for file in files:
                                 
                 # CHECK IF HASH IS IN THIS FILE
-                md5_path = os.path.join(root, file)
+                sha512_path = os.path.join(root, file)
                 
-                f = open(md5_path, 'r')
+                f = open(sha512_path, 'r')
                 text = f.read()
                                 
                 with ProcessPoolExecutor(max_workers=processes) as executor:
-                    futures = [executor.submit(scanner, text, row[0], md5_path, logger1, logger2) for row in rows]
+                    futures = [executor.submit(scanner, text, row[0], sha512_path, logger1, logger2) for row in rows]
 
                     for future in futures:
                         result = future.result()
